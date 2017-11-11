@@ -21,17 +21,27 @@ def authenticate():
     auth.set_access_token(passwords.access_key, passwords.access_secret)
     return tweepy.API(auth)
 
-def parseTweet(tweet_id, chat_id, api = None):
+def parseTweet(tweet_id, api = None):
     if api is None:
         api = authenticate()
-    send(api.get_status(tweet_id, tweet_mode='extended')._json['full_text'], chat_id)
+    return api.get_status(tweet_id, tweet_mode='extended')._json['full_text']
+
+def handleBBC(tweet):
+    send(tweet, -1001180515970)
+
+def handleNewsTg(tweet):
+    editedTweet = tweet.replace('#ULTIMORA ', '')
+    send (editedTweet, -1001226946977)
+
+def handleMacRumors(tweet):
+    send(tweet, -1001260217608)
 
 def newsHandler():
     #Dictionary of Twitter id's and Telegram chat_id's
     telegram = {}
-    telegram[5402612] = -1001180515970 #@BBCBreaking to 34ORE NEWS
-    telegram[4252538955] = -1001226946977 #@NewsTG_ to 34ORE ITALIA
-    telegram[14861285] = -1001260217608 #@MacRumors to 34ORE APPLE
+    telegram[5402612] = handleBBC #@BBCBreaking to 34ORE NEWS
+    telegram[4252538955] = handleNewsTg #@NewsTG_ to 34ORE ITALIA
+    telegram[14861285] = handleMacRumors #@MacRumors to 34ORE APPLE
 
     accounts = Account.getAllAccounts()
     api = authenticate()
@@ -43,7 +53,8 @@ def newsHandler():
             statuses.reverse()
             for status in statuses:
                 if account.user_id in telegram:
-                    parseTweet(status.id, telegram[account.user_id], api)
+                    telegram[account.user_id](parseTweet(status.id, api))
+
 
 
 
