@@ -16,11 +16,14 @@ def send(msg, chat_id):
         'disable_web_page_preview': 'true',
     })).read()
 
+def authenticate():
+    auth = tweepy.OAuthHandler(passwords.consumer_key, passwords.consumer_secret)
+    auth.set_access_token(passwords.access_key, passwords.access_secret)
+    return tweepy.API(auth)
+
 def parseTweet(tweet_id, chat_id, api = None):
     if api is None:
-        auth = tweepy.OAuthHandler(passwords.consumer_key, passwords.consumer_secret)
-        auth.set_access_token(passwords.access_key, passwords.access_secret)
-        api = tweepy.API(auth)
+        api = authenticate()
         send(api.get_status(tweet_id, tweet_mode='extended')._json['full_text'], chat_id)
     else:
         send(api.get_status(tweet_id, tweet_mode='extended')._json['full_text'], chat_id)
@@ -33,11 +36,7 @@ def newsHandler():
     telegram[14861285] = -1001260217608 #@MacRumors to 34ORE APPLE
 
     accounts = Account.query().fetch()
-    
-    auth = tweepy.OAuthHandler(passwords.consumer_key, passwords.consumer_secret)
-    auth.set_access_token(passwords.access_key, passwords.access_secret)
-    api = tweepy.API(auth)
-    
+    api = authenticate
     for account in accounts:
         statuses = api.user_timeline(user_id = account.user_id, since_id = account.last_tweet_id)
         if statuses:
