@@ -24,9 +24,7 @@ def authenticate():
 def parseTweet(tweet_id, chat_id, api = None):
     if api is None:
         api = authenticate()
-        send(api.get_status(tweet_id, tweet_mode='extended')._json['full_text'], chat_id)
-    else:
-        send(api.get_status(tweet_id, tweet_mode='extended')._json['full_text'], chat_id)
+    send(api.get_status(tweet_id, tweet_mode='extended')._json['full_text'], chat_id)
 
 def newsHandler():
     #Dictionary of Twitter id's and Telegram chat_id's
