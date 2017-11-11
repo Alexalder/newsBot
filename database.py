@@ -26,3 +26,7 @@ class Account(ndb.Model):
             return True
         except Exception, e:
             return False
+
+    @staticmethod
+    def getAllAccounts():
+        return Account.query().fetch()

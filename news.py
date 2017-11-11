@@ -33,8 +33,8 @@ def newsHandler():
     telegram[4252538955] = -1001226946977 #@NewsTG_ to 34ORE ITALIA
     telegram[14861285] = -1001260217608 #@MacRumors to 34ORE APPLE
 
-    accounts = Account.query().fetch()
-    api = authenticate
+    accounts = Account.getAllAccounts()
+    api = authenticate()
     for account in accounts:
         statuses = api.user_timeline(user_id = account.user_id, since_id = account.last_tweet_id)
         if statuses:
@@ -42,7 +42,8 @@ def newsHandler():
             account.put()
             statuses.reverse()
             for status in statuses:
-                parseTweet(status.id, telegram[account.user_id], api)
+                if account.user_id in telegram:
+                    parseTweet(status.id, telegram[account.user_id], api)
 
 
 
