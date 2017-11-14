@@ -35,23 +35,37 @@ def parseTweet(tweet_id, api = None):
 
 def handleBBC(tweet):
     pos = tweet.rfind('http')
-    editedTweet = tweet[:pos]
-    if editedTweet[-1] == '\n':
-        i = -1
-        while editedTweet[i]=='\n':
-            i -= 1
-        editedTweet = editedTweet[:i+1]
-        if editedTweet[i]!=' ':
-            editedTweet += ' '
-    editedTweet += '[Link](' + tweet[pos:] + ')'
-    send(editedTweet, -1001180515970)
+    if pos > 0:
+        editedTweet = tweet[:pos]
+        if editedTweet[-1] == '\n':
+            i = -1
+            while editedTweet[i]=='\n':
+                i -= 1
+            editedTweet = editedTweet[:i+1]
+            if editedTweet[i]!=' ':
+                editedTweet += ' '
+        editedTweet += '([Link](' + tweet[pos:] + '))'
+        send(editedTweet, -1001180515970)
+    else:
+        send(tweet, -1001180515970)
 
 def handleNewsTg(tweet):
     editedTweet = tweet.replace('#ULTIMORA ', '')
     send (editedTweet, -1001226946977)
 
 def handleMacRumors(tweet):
-    send(tweet, -1001260217608)
+    pos = tweet.rfind('by @')
+    if pos > 0:
+        tweet = tweet[:pos]
+        pos = tweet.rfind('http')
+        if pos > 0:
+            editedTweet = tweet[:pos]
+            editedTweet += '([Link](' + tweet[pos:] + '))'
+            send(editedTweet, -1001260217608)
+        else:
+            send(tweet, -1001260217608)
+    else:
+        send(tweet, -1001260217608)
 
 def newsHandler():
     #Dictionary of Twitter id's and Telegram chat_id's
